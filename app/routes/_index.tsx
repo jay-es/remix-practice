@@ -1,4 +1,6 @@
-import type { MetaFunction } from "@remix-run/node";
+import { getPosts } from "@jay-es/jsonplaceholder-client";
+import { type MetaFunction, json } from "@remix-run/node";
+import { Link, useLoaderData } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -7,34 +9,23 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export const loader = async () => {
+  const posts = await getPosts();
+  return json({ posts });
+};
+
 export default function Index() {
+  const { posts } = useLoaderData<typeof loader>();
+
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <h1>Welcome to Remix</h1>
       <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
+        {posts.map(({ id, title }) => (
+          <li key={id}>
+            <Link to={`/posts/${id}`}>{title}</Link>
+          </li>
+        ))}
       </ul>
     </div>
   );
