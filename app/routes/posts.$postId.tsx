@@ -4,7 +4,7 @@ import {
   getUser,
 } from "@jay-es/jsonplaceholder-client";
 import { type LoaderFunctionArgs, json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
@@ -26,6 +26,9 @@ export default function Post() {
       <h1>{post.title}</h1>
       <strong>by {user.name}</strong>
       <p>{post.body}</p>
+      <Link className="text-primary" to={`/posts/${post.id}/edit`}>
+        Edit
+      </Link>
       <h2>Comments</h2>
       <ul>
         {comments.map(({ id, name, body }) => (
