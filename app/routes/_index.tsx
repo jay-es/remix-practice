@@ -1,6 +1,6 @@
-import { getPosts } from "@jay-es/jsonplaceholder-client";
 import { type MetaFunction, json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
+import { prisma } from "~/lib/prisma";
 
 export const meta: MetaFunction = () => {
   return [
@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader = async () => {
-  const posts = await getPosts();
+  const posts = await prisma.post.findMany();
   return json({ posts });
 };
 

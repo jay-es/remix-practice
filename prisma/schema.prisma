@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  name     String
+  username String
+  email    String
+  // TODO: address
+  phone    String
+  website  String
+  // TODO: company
+  posts    Post[]
+  todos    Todo[]
+  albums   Album[]
+}
+
+model Post {
+  id       Int       @id @default(autoincrement())
+  userId   Int
+  title    String
+  body     String
+  author   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments Comment[]
+}
+
+model Comment {
+  id     Int    @id @default(autoincrement())
+  postId Int
+  name   String
+  email  String
+  body   String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Todo {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  title     String
+  completed Boolean
+  author    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Album {
+  id     Int     @id @default(autoincrement())
+  userId Int
+  title  String
+  author User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photos Photo[]
+}
+
+model Photo {
+  id           Int    @id @default(autoincrement())
+  albumId      Int
+  title        String
+  url          String
+  thumbnailUrl String
+  album        Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
+}

@@ -1,4 +1,3 @@
-import { getPost, patchPost } from "@jay-es/jsonplaceholder-client";
 import {
   ActionFunctionArgs,
   type LoaderFunctionArgs,
@@ -8,11 +7,14 @@ import {
 import { Form, useLoaderData, useNavigate } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import * as v from "valibot";
+import { prisma } from "~/lib/prisma";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   invariant(params.postId, "Missing postId param");
   const postId = parseInt(params.postId, 10);
-  const post = await getPost(postId);
+  const post = await prisma.post.findUniqueOrThrow({
+    where: { id: postId },
+  });
 
   return json({ post });
 };
@@ -26,7 +28,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     v.object({ title: v.string(), body: v.string() }),
     Object.fromEntries(formData),
   );
-  await patchPost(postId, updates);
+  await prisma.post.update({
+    data: updates,
+    where: { id: postId },
+  });
 
   return redirect(`/posts/${postId}`);
 };
